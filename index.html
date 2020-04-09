@@ -5,11 +5,28 @@
     <title>Gamedev Canvas Workshop</title>
     <style>
     	* { padding: 0; margin: 0; }
-    	canvas { background: #eee; display: block; margin: 0 auto; }
+        @font-face {
+            font-family: "Super Mario Bros. 2";
+            src: url("Super Mario Bros. 2.ttf");
+        }
+
+        h1{
+            font-family: "Super Mario Bros. 2";
+            position: absolute;
+            top: 100px;
+            left: 500px;
+        }
+    	canvas {
+             background: #eee; 
+             display: block; 
+             margin-top: 150px;
+             margin-left: auto;
+             margin-right: auto;
+              }
     </style>
 </head>
 <body>
-
+<h1> 2D BREKAOUT</h1>
 <canvas id="myCanvas" width="480" height="320"></canvas>
 
 <script>
@@ -29,6 +46,9 @@
 
     let rightPressed = false;
     let leftPressed = false;
+     
+    let score = 0;
+    let lives = 5;
 
       function drawBall(){
       ctx.beginPath();
@@ -47,15 +67,12 @@
       }
 
       let color = "#0095DD"; 
-      let r;
-      let g;
-      let b;
 
       function randomColor(){
-       r = Math.floor(Math.random()*256);
-       g = Math.floor(Math.random()*256);
-       b = Math.floor(Math.random()*256);
-      color = "rgb(" + r + ", " + g + ", " + b + ")"
+      let r = Math.floor(Math.random()*256);
+      let g = Math.floor(Math.random()*256);
+      let b = Math.floor(Math.random()*256);
+      color = "rgb(" + r + ", " + g + ", " + b + ")";
       }
 
      function draw(){
@@ -63,6 +80,8 @@
       drawBricks();
       drawBall();
       drawPaddle();
+      drawScore();
+      drawLives();
       collisionDetection();
       x += dx;
       y += dy;
@@ -71,12 +90,22 @@
           randomColor();
        } else if(y + dy > canvas.height - ballRadius ){
            if(x > paddleX && x < paddleX + paddleWidth){
-               dy += 0.5;
+               dy += 0.3;
                dy = -dy;
+               dx += Math.floor(Math.random()*10)
            }else{
+             lives--;
+             if(!lives){
             alert("GAME OVER");
             document.location.reload();
-            clearInterval(interval);
+             }
+             else{
+                 x = canvas.width / 2;
+                 y = canvas.height - 30;
+                 dx = 2;
+                 dy = -2;
+                 paddleX = (canvas.width - paddleWidth) / 2;
+             }
            }
        }
         if(x + dx > canvas.width - ballRadius || x + dx < ballRadius){
@@ -94,10 +123,23 @@
               paddleX = 0;
           }
       }
+      requestAnimationFrame(draw);
+
      }
 
      document.addEventListener("keydown", keyDownHandler,false )
      document.addEventListener("keyup", keyUpHandler, false )
+     
+     document.addEventListener("mousemove", mouseMoveHandler, false);
+   
+     function mouseMoveHandler(e){
+         let relativeX = e.clientX - canvas.offsetLeft;
+         
+          if(relativeX - (paddleWidth/2)> 0  && relativeX + (paddleWidth/2) < canvas.width){
+              paddleX = relativeX - paddleWidth/2;
+        
+          }
+     }
 
      function keyDownHandler(e){
          if(e.key == "Right" || e.key == "ArrowRight") {
@@ -115,7 +157,7 @@
                leftPressed = false;
            }
       }
-
+ 
     let brickRowCount = 3;
     let brickColumnCount = 5;
     let brickWidth = 75; 
@@ -131,7 +173,7 @@
              bricks[c][r] = { x: 0, y: 0, status : 1};
          }
     }
-      
+
       function drawBricks() {
          for(let c = 0; c < brickColumnCount; c++){
              for(let r = 0; r < brickRowCount; r++){
@@ -142,7 +184,7 @@
                   bricks[c][r].y = brickY;
                   ctx.beginPath();
                   ctx.rect(brickX, brickY, brickWidth, brickHeight);
-                  ctx.fillstyle = "#0095DD";
+                  ctx.fillstyle = "#32CD32";
                   ctx.fill();
                   ctx.closePath();
                 }
@@ -159,15 +201,31 @@
                       dy = -dy;
                       b.status = 0; 
                       randomColor();
+                      score+= 2;
+                      if(score == (brickRowCount * brickColumnCount) * 2){
+                          alert("YOU WIN, CONGRATULATIONS! YOUR SCORE IS :" + score);
+                          document.location.reload();
+                      }
                     }
                   }
               }
           }
       }
 
-     let interval = setInterval(draw, 10);
+      function drawScore(){
+        ctx.font = "16px Arial";
+        ctx.fillStyle = "#0095DD"
+        ctx.fillText("Score: " +score, 8, 20);
+      }
+      
+      function drawLives(){
+          ctx.font = "16px Arial";
+          ctx.fillStyle = "#0095DD";
+          ctx.fillText("Lives : " + lives, canvas.width - 65, 20);
+      }
+
+     draw();
      
 </script>
-
 </body>
 </html>
