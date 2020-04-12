@@ -12,6 +12,7 @@
 
         h1{
             font-family: "Super Mario Bros. 2";
+            color: white;
             position: absolute;
             top: 100px;
             left: 500px;
@@ -22,7 +23,11 @@
              margin-top: 150px;
              margin-left: auto;
              margin-right: auto;
+             border: dashed 3px black;
               }
+        body{
+            background-color: black;
+        }
     </style>
 </head>
 <body>
@@ -61,7 +66,7 @@
       function drawPaddle() {
           ctx.beginPath();
           ctx.rect(paddleX, canvas.height - paddleHeight, paddleWidth, paddleHeight);
-          ctx.fillStyle = "#0095DD"
+          ctx.fillStyle = "#0095DD";
           ctx.fill();
           ctx.closePath();
       }
@@ -83,6 +88,7 @@
       drawScore();
       drawLives();
       collisionDetection();
+      bricks.forEach( () => ctx.fillStyle = "maroon")
       x += dx;
       y += dy;
       if(y + dy < ballRadius){
@@ -184,7 +190,7 @@
                   bricks[c][r].y = brickY;
                   ctx.beginPath();
                   ctx.rect(brickX, brickY, brickWidth, brickHeight);
-                  ctx.fillstyle = "#32CD32";
+                  ctx.fillstyle = "blue";
                   ctx.fill();
                   ctx.closePath();
                 }
@@ -214,13 +220,13 @@
 
       function drawScore(){
         ctx.font = "16px Arial";
-        ctx.fillStyle = "#0095DD"
+        ctx.fillStyle = "black"
         ctx.fillText("Score: " +score, 8, 20);
       }
       
       function drawLives(){
-          ctx.font = "16px Arial";
-          ctx.fillStyle = "#0095DD";
+          ctx.font = "16px Arial ";
+          ctx.fillStyle = "black";
           ctx.fillText("Lives : " + lives, canvas.width - 65, 20);
       }
 
